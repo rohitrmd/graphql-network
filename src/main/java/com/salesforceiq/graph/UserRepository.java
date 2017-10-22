@@ -24,7 +24,8 @@ public class UserRepository {
     public List<User> getAllUsers() {
         List<User> allUsers = new ArrayList<>();
         for (Document doc : users.find()) {
-            allUsers.add(user(doc));
+            User user = user(doc);
+            allUsers.add(user);
         }
         return allUsers;
     }

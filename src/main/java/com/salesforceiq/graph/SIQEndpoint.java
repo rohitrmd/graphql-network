@@ -11,10 +11,12 @@ import javax.servlet.annotation.WebServlet;
 @WebServlet(urlPatterns = "/graphql")
 public class SIQEndpoint extends SimpleGraphQLServlet {
     private static final UserRepository userRepository;
+    private static final PostRepository postRepository;
 
     static {
         MongoDatabase mongo = new MongoClient().getDatabase("graphql");
-        userRepository = new UserRepository(mongo.getCollection("network"));
+        userRepository = new UserRepository(mongo.getCollection("users"));
+        postRepository = new PostRepository(mongo.getCollection("posts"));
     }
 
     public SIQEndpoint() {
@@ -25,7 +27,7 @@ public class SIQEndpoint extends SimpleGraphQLServlet {
     private static GraphQLSchema buildSchema() {
         return SchemaParser.newParser()
                 .file("schema.graphqls")
-                .resolvers(new Query(userRepository), new Mutation(userRepository))
+                .resolvers(new Query(userRepository, postRepository), new Mutation(userRepository, postRepository))
                 .build()
                 .makeExecutableSchema();
     }
